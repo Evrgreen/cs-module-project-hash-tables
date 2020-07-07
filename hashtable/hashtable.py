@@ -2,13 +2,14 @@ class HashTableEntry:
     """
     Linked List hash table key/value pair
     """
+
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
 
 
-# Hash table can't have fewer than this many slots
+
 MIN_CAPACITY = 8
 
 
@@ -16,13 +17,15 @@ class HashTable:
     """
     A hash table that with `capacity` buckets
     that accepts string keys
-
+    
     Implement this.
     """
 
-    def __init__(self, capacity):
+    def __init__(self, capacity=MIN_CAPACITY):
         # Your code here
-
+        self.capacity = capacity 
+        self.data = [None for item in range(capacity)]
+        self.entries = 0
 
     def get_num_slots(self):
         """
@@ -34,8 +37,7 @@ class HashTable:
 
         Implement this.
         """
-        # Your code here
-
+        return len(self.data)
 
     def get_load_factor(self):
         """
@@ -43,8 +45,8 @@ class HashTable:
 
         Implement this.
         """
+        return len([item for item in self.data if item != None])/self.capacity
         # Your code here
-
 
     def fnv1(self, key):
         """
@@ -54,7 +56,7 @@ class HashTable:
         """
 
         # Your code here
-
+        pass
 
     def djb2(self, key):
         """
@@ -63,14 +65,17 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         # Your code here
-
+        hash = 5381
+        for char in key:
+            hash = (hash * 33) + ord(char)
+        return hash
 
     def hash_index(self, key):
         """
         Take an arbitrary key and return a valid integer index
         between within the storage capacity of the hash table.
         """
-        #return self.fnv1(key) % self.capacity
+        # return self.fnv1(key) % self.capacity
         return self.djb2(key) % self.capacity
 
     def put(self, key, value):
@@ -82,18 +87,51 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        if (self.get_load_factor() / self.capacity) >= 0.7:
+            self.resize()
 
+        index = self.hash_index(key)
+        current = self.data[index]
+
+        while current:
+            if current.key == key:
+                current.value = value
+                return
+            elif current.next:
+                current = current.next
+            else:
+                current.next = HashTableEntry(key, value)
+                return
+        self.data[index] = HashTableEntry(key, value)
 
     def delete(self, key):
         """
         Remove the value stored with the given key.
 
         Print a warning if the key is not found.
-
+        
         Implement this.
         """
         # Your code here
+        if (self.get_load_factor() / self.capacity) <= 0.2:
+            self.resize(0.5)
 
+        index = self.hash_index(key)
+        current = self.data[index]
+
+        if current:
+            if current.key == key:
+                self.data[index] = current.next
+                return
+
+            while current.next:
+                prev_node = current
+                current = current.next
+                if current.key == key:
+                    prev_node.next = current.next
+                    return
+
+        return None
 
     def get(self, key):
         """
@@ -104,7 +142,17 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        index = self.hash_index(key)
+        current = self.data[index]
 
+        if current:
+            while current:
+                if current.key == key:
+                    return current.value
+                current = current.next
+            return None
+        else:
+            return None
 
     def resize(self, new_capacity):
         """
@@ -114,8 +162,20 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        if new_capacity == 2:
+            self.capacity = self.capacity * 2
+        elif new_capacity == 0.5:
+            self.capacity = self.capacity // 2
+        else:
+            self.capacity = new_capacity
 
+        old_data = self.data
+        self.data = [None] * self.capacity
 
+        for node in old_data:
+            while node:
+                self.put(node.key, node.value)
+                node = node.next
 
 if __name__ == "__main__":
     ht = HashTable(8)
