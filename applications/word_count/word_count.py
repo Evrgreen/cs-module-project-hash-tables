@@ -1,21 +1,22 @@
 import string
 
 
+punc_list = (":", ";", ",", ".", "-", "+", "=", "/", "\\",
+             "|", "[", "]", "{", "}", "(", ")", "*", "^", "&", "\"")
+
+
 def word_count(s):
-    word_dict = {}
-    for word in s.split(' '):
-        word = ''.join(char for char in word if char.isalnum())
-        word = word.lower()
-        if word in word_dict:
-            word_dict[word] += 1
-        else:
-            word_dict[word] = 1
-    return word_dict
+    # Your code here
+    tally = {}
+
+    for item in punc_list:
+        s = s.replace(item, "")
+    result = [word.lower() for word in s.split()]
+
+    for item in result:
+        tally[item] = tally[item]+1 if item in tally else 1
+    return tally
 
 
 if __name__ == "__main__":
-    print(word_count(""))
-    print(word_count("Hello"))
-    print(word_count('Hello, my cat. And my cat doesn\'t say "hello" back.'))
-    print(word_count(
-        'This is a test of the emergency broadcast network. This is only a test.'))
+    print(word_count('a a\ra\na\ta \t\r\n'))
