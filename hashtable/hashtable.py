@@ -9,7 +9,6 @@ class HashTableEntry:
         self.next = None
 
 
-
 MIN_CAPACITY = 8
 
 
@@ -17,13 +16,13 @@ class HashTable:
     """
     A hash table that with `capacity` buckets
     that accepts string keys
-    
+
     Implement this.
     """
 
     def __init__(self, capacity=MIN_CAPACITY):
         # Your code here
-        self.capacity = capacity 
+        self.capacity = capacity
         self.data = [None for item in range(capacity)]
         self.entries = 0
 
@@ -109,7 +108,7 @@ class HashTable:
         Remove the value stored with the given key.
 
         Print a warning if the key is not found.
-        
+
         Implement this.
         """
         # Your code here
@@ -162,6 +161,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        self.capactiy = self.capacity * new_capacity
         if new_capacity == 2:
             self.capacity = self.capacity * 2
         elif new_capacity == 0.5:
@@ -176,6 +176,7 @@ class HashTable:
             while node:
                 self.put(node.key, node.value)
                 node = node.next
+
 
 if __name__ == "__main__":
     ht = HashTable(8)
